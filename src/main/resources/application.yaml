@@ -1,0 +1,14 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /stmanager
+
+spring:
+  datasource:
+    url: "jdbc:mysql://localhost:3306/springboot_react_studentmanager"
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
