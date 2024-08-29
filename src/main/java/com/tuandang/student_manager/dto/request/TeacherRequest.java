@@ -1,21 +1,19 @@
-package com.tuandang.student_manager.dto.response;
+package com.tuandang.student_manager.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.NaturalId;
+
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StudentResponse {
-    Long id;
+public class TeacherRequest {
     String firstName;
     String lastName;
     boolean gender;
     String email;
     String phoneNumber;
     String department;
-    String className;
 }

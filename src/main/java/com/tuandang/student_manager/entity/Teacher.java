@@ -11,8 +11,7 @@ import org.hibernate.annotations.NaturalId;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
-public class Student {
+public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -23,7 +22,6 @@ public class Student {
     String email;
     String phoneNumber;
     String department;
-    String className;
     @OneToOne
     @JoinColumn(name = "userId")
     User user;
