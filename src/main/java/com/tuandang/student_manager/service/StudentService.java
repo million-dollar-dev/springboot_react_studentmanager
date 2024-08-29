@@ -36,13 +36,13 @@ public class StudentService implements IStudentService{
     }
 
     @Override
-    public StudentResponse getStudentById(String id) {
+    public StudentResponse getStudentById(Long id) {
         return studentMapper.toStudentResponse(studentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_EXISTED)));
     }
 
     @Override
-    public StudentResponse updateStudentById(String id, StudentRequest request) {
+    public StudentResponse updateStudentById(Long id, StudentRequest request) {
         var student = studentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_EXISTED));
         studentMapper.updateStudent(student, request);
@@ -50,7 +50,7 @@ public class StudentService implements IStudentService{
     }
 
     @Override
-    public void deleteStudentById(String id) {
+    public void deleteStudentById(Long id) {
         studentRepository.deleteById(id);
     }
 

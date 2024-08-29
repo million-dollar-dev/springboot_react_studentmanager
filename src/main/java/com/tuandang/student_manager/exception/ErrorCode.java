@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatusCode;
 public enum ErrorCode {
     STUDENT_EXISTED(1001, "Student already existed", HttpStatus.BAD_REQUEST),
     STUDENT_NOT_EXISTED(1002, "Student not existed", HttpStatus.NOT_FOUND),
-
+    TEACHER_EXISTED(1003, "Teacher already existed", HttpStatus.BAD_REQUEST),
+    TEACHER_NOT_EXISTED(1004, "Teacher not existed", HttpStatus.NOT_FOUND)
     ;
     private int code;
     private String message;

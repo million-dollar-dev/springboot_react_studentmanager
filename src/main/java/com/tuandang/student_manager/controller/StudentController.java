@@ -31,21 +31,21 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<StudentResponse> getStudentById(@PathVariable String id) {
+    public ApiResponse<StudentResponse> getStudentById(@PathVariable Long id) {
         return ApiResponse.<StudentResponse>builder()
                 .result(studentService.getStudentById(id))
                 .build();
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<StudentResponse> updateStudentById(@PathVariable String id, @RequestBody StudentRequest request) {
+    public ApiResponse<StudentResponse> updateStudentById(@PathVariable Long id, @RequestBody StudentRequest request) {
         return ApiResponse.<StudentResponse>builder()
                 .result(studentService.updateStudentById(id, request))
                 .build();
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deleteStudentById(@PathVariable String id) {
+    public ApiResponse<Void> deleteStudentById(@PathVariable Long id) {
         studentService.deleteStudentById(id);
         return ApiResponse.<Void>builder()
                 .build();

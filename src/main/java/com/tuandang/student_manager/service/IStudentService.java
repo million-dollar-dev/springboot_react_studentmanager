@@ -9,7 +9,7 @@ import java.util.List;
 public interface IStudentService {
     Student create(StudentRequest request);
     List<StudentResponse> getStudents();
-    StudentResponse getStudentById(String id);
-    StudentResponse updateStudentById(String id, StudentRequest request);
-    void deleteStudentById(String id);
+    StudentResponse getStudentById(Long id);
+    StudentResponse updateStudentById(Long id, StudentRequest request);
+    void deleteStudentById(Long id);
 }
