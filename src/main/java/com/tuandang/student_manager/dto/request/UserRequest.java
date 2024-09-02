@@ -1,23 +1,19 @@
-package com.tuandang.student_manager.entity;
+package com.tuandang.student_manager.dto.request;
 
-import jakarta.persistence.*;
+import com.tuandang.student_manager.entity.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
 
-@Entity
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User {
-    @Id
-    @Column(columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci")
+public class UserRequest {
     String username;
     String password;
-    @ManyToMany
     Set<Role> role;
-
 }

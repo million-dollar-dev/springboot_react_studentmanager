@@ -44,7 +44,10 @@ public class TeacherService implements ITeacherService{
 
     @Override
     public TeacherResponse updateTeacherById(Long id, TeacherRequest request) {
-        return null;
+        var teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.TEACHER_NOT_EXISTED));
+        teacherMapper.updateTeacher(teacher, request);
+        return teacherMapper.toTeacherResponse(teacherRepository.save(teacher));
     }
 
     @Override
