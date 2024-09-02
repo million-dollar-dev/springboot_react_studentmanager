@@ -11,7 +11,9 @@ public enum ErrorCode {
     TEACHER_EXISTED(1003, "Teacher already existed", HttpStatus.BAD_REQUEST),
     TEACHER_NOT_EXISTED(1004, "Teacher not existed", HttpStatus.NOT_FOUND),
     USER_EXISTED(1003, "User already existed", HttpStatus.BAD_REQUEST),
-    USER_NOT_EXISTED(1004, "User not existed", HttpStatus.NOT_FOUND)
+    USER_NOT_EXISTED(1004, "User not existed", HttpStatus.NOT_FOUND),
+    PERMISSION_EXISTED(1003, "Permission already existed", HttpStatus.BAD_REQUEST),
+    PERMISSION_NOT_EXISTED(1004, "Permission not existed", HttpStatus.NOT_FOUND)
     ;
     private int code;
     private String message;
