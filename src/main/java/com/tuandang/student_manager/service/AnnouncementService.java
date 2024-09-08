@@ -8,6 +8,7 @@ import com.tuandang.student_manager.exception.AppException;
 import com.tuandang.student_manager.exception.ErrorCode;
 import com.tuandang.student_manager.mapper.AnnouncementMapper;
 import com.tuandang.student_manager.repository.AnnouncementRepository;
+import com.tuandang.student_manager.repository.criteria.SearchCriteria;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -114,5 +115,29 @@ public class AnnouncementService implements IAnnouncementService{
     @Override
     public void delete(String id) {
         announcementRepository.deleteById(id);
+    }
+
+    @Override
+    public PageResponse<List<AnnouncementResponse>> advanceSearchWithCriteria(int pageNo, int pageSize, String sortBy, String... search) {
+        // Tham số search có dạng: name: A, datePost: 12,...
+        // Lấy ra dách sách
+        List<SearchCriteria> criteriaList = new ArrayList<>();
+        if (search != null) {
+            for (String s: search) {
+                // name:asc|desc
+                //Sử dụng regex để tách chuỗi kiểm tra
+                Pattern pattern = Pattern.compile("(\\w+?)(:|>|<)(.*)");
+                Matcher matcher = pattern.matcher(sortBy);
+                if (matcher.find()) {
+                    criteriaList.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
+                }
+            }
+        }
+
+        // Lấy ra số lượng bản ghi
+        Long totalElements = 1L;
+        return PageResponse.<List<AnnouncementResponse>>builder()
+
+                .build();
     }
 }

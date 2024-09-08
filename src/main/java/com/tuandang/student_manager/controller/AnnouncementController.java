@@ -65,4 +65,15 @@ public class AnnouncementController {
                 .build();
     }
 
+    @GetMapping("/advance-search-with-criteria")
+    public ApiResponse<PageResponse> advanceSeachWithCriteria(@RequestParam(defaultValue = "0", required = false) int pageNo,
+                                                   @RequestParam(defaultValue = "20", required = false) int pageSize,
+                                                   @RequestParam(required = false) String sortBy,
+                                                   @RequestParam(required = false) String... search
+                                                   ) {
+        return ApiResponse.<PageResponse>builder()
+                .result(announcementService.advanceWithCriteria(pageNo, pageSize, sortBy, search))
+                .build();
+    }
+
 }
