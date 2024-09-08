@@ -13,4 +13,6 @@ public interface IAnnouncementService {
     PageResponse<List<AnnouncementResponse>> getAnnouncementsWithMultipleColumns(int pageNo, int pageSize, String... sorts);
     AnnouncementResponse update(String id, AnnouncementRequest request);
     void delete(String id);
+
+    PageResponse<List<AnnouncementResponse>> advanceSearchWithCriteria(int pageNo, int pageSize, String sortBy, String... search);
 }
