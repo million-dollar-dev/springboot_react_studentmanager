@@ -10,6 +10,8 @@ import com.tuandang.student_manager.mapper.AnnouncementMapper;
 import com.tuandang.student_manager.repository.AnnouncementRepository;
 import com.tuandang.student_manager.repository.SearchRepository;
 import com.tuandang.student_manager.repository.criteria.SearchCriteria;
+import com.tuandang.student_manager.repository.specification.AnnouncementSpec;
+import com.tuandang.student_manager.repository.specification.AnnouncementSpecificationBuilder;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -123,6 +126,44 @@ public class AnnouncementService implements IAnnouncementService{
     @Override
     public PageResponse<List<AnnouncementResponse>> advanceSearchWithCriteria(int pageNo, int pageSize, String sortBy, String... search) {
         return searchRepository.advanceSearchWithCriteria(pageNo, pageSize, sortBy, search);
+    }
+
+    @Override
+    public PageResponse<List<AnnouncementResponse>> advanceSearchWithSpecification(Pageable pageable, String[] announcement) {
+        Page<Announcement> announcements = null;
+        List<Announcement> list = new ArrayList<>();
+
+        if (announcement != null) {
+//            Specification<Announcement> spec = AnnouncementSpec.hasTitle("T");
+//            Specification<Announcement> contentSpec = AnnouncementSpec.hasContent("K");
+//            Specification<Announcement> finalSpec = spec.and(contentSpec);
+            AnnouncementSpecificationBuilder builder = new AnnouncementSpecificationBuilder();
+            for (String s: announcement) {
+                Pattern pattern = Pattern.compile("(\\w+?)([:<>~!])(\\p{Punct})(.*)(\\p{Punct})");
+                Matcher matcher = pattern.matcher(s);
+                if (matcher.find())
+                    builder.with(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5));
+            }
+            list = announcementRepository.findAll(builder.build());
+            List<AnnouncementResponse> tempList = new ArrayList<>();
+            list.stream().forEach(a -> tempList.add(announcementMapper.toAnnouncementResponse(a)));
+            return PageResponse.<List<AnnouncementResponse>>builder()
+                    .pageNo(pageable.getPageNumber())
+                    .pageSize(pageable.getPageSize())
+                    .pageTotal(10)
+                    .item(tempList)
+                    .build();
+        } else {
+            announcements = announcementRepository.findAll(pageable);
+        }
+        List<AnnouncementResponse> tempList = new ArrayList<>();
+        announcements.stream().forEach(a -> tempList.add(announcementMapper.toAnnouncementResponse(a)));
+        return PageResponse.<List<AnnouncementResponse>>builder()
+                .pageNo(pageable.getPageNumber())
+                .pageSize(pageable.getPageSize())
+                .pageTotal(announcements.getTotalPages())
+                .item(tempList)
+                .build();
     }
 
 
