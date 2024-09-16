@@ -15,4 +15,6 @@ public interface IAnnouncementService {
     void delete(String id);
 
     PageResponse<List<AnnouncementResponse>> advanceSearchWithCriteria(int pageNo, int pageSize, String sortBy, String... search);
+
+    PageResponse<List<AnnouncementResponse>> advanceSearchWithSpecification(Pageable pageable, String[] announcement);
 }

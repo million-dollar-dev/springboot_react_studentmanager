@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -72,7 +73,16 @@ public class AnnouncementController {
                                                    @RequestParam(required = false) String... search
                                                    ) {
         return ApiResponse.<PageResponse>builder()
-                .result(announcementService.advanceWithCriteria(pageNo, pageSize, sortBy, search))
+                .result(announcementService.advanceSearchWithCriteria(pageNo, pageSize, sortBy, search))
+                .build();
+    }
+
+    @GetMapping("/advance-search-with-specification")
+    public ApiResponse<PageResponse> advanceSearchWithSpecification(Pageable pageable,
+                                                                   @RequestParam(required = false) String[] announcement
+    ) {
+        return ApiResponse.<PageResponse>builder()
+                .result(announcementService.advanceSearchWithSpecification(pageable, announcement))
                 .build();
     }
 

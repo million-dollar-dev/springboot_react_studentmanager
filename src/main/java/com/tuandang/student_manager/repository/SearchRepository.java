@@ -38,7 +38,7 @@ public class SearchRepository {
                 // name:asc|desc
                 //Sử dụng regex để tách chuỗi kiểm tra
                 Pattern pattern = Pattern.compile("(\\w+?)(:|>|<)(.*)");
-                Matcher matcher = pattern.matcher(sortBy);
+                Matcher matcher = pattern.matcher(s);
                 if (matcher.find()) {
                     criteriaList.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
                 }
@@ -49,7 +49,6 @@ public class SearchRepository {
         getAnnouncementsWithCriteria(pageNo, pageSize, criteriaList, sortBy)
                 .forEach(announcement -> announcements.add(announcementMapper.toAnnouncementResponse(announcement)));
         // Lấy ra số lượng bản ghi
-        Long totalElements = 1L;
         return PageResponse.<List<AnnouncementResponse>>builder()
                 .pageNo(pageNo)
                 .pageSize(pageSize)
