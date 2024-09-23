@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -13,10 +14,13 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Role implements Serializable {
-    @Id
+@Table(name = "roles")
+public class Role extends AbstractEntity<Integer> implements Serializable {
     String name;
     String description;
-    @ManyToMany
-    Set<Permission> permissions;
+    @OneToMany(mappedBy = "role")
+    Set<RoleHasPermission> roleHasPermissions = new HashSet<>();
+    @OneToMany(mappedBy = "role")
+    Set<UserHasRole> userHasRoles = new HashSet<>();
+
 }
