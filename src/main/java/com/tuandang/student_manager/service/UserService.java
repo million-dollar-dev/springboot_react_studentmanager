@@ -11,6 +11,8 @@ import com.tuandang.student_manager.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +24,13 @@ import java.util.List;
 public class UserService implements IUserService {
     UserRepository userRepository;
     UserMapper userMapper;
+
+    @Override
+    public UserDetailsService userDetailsService() {
+        return username -> userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
     @Override
     public User create(UserRequest request) {
         return userMapper.toUser(request);
