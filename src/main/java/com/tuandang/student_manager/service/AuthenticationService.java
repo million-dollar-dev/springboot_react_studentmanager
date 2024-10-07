@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService implements IAuthenticationService{
     UserRepository userRepository;
     AuthenticationManager authenticationManager;
-    JwtService jwtService;
+    IJwtService jwtService;
     @Override
     public TokenResponse authenticate(SignInRequest request) {
         // Do User đã implements UserDetails nên authentication manager hỗ trợ xác thực
