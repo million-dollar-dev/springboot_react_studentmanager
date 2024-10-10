@@ -14,4 +14,6 @@ public interface IUserService {
     List<UserResponse> getUsers();
     UserResponse updatePassword(String username, UserUpdateRequest request);
     void deleteUserById(String username);
+    List<String> findAllRolesByUserId(String username);
+    User getByUsername(String userName);
 }

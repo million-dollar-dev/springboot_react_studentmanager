@@ -2,6 +2,7 @@ package com.tuandang.student_manager.configuration;
 
 import com.tuandang.student_manager.service.IJwtService;
 import com.tuandang.student_manager.service.IUserService;
+import com.tuandang.student_manager.util.TokenType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,11 +42,11 @@ public class PreFilter extends OncePerRequestFilter {
             return;
         }
         final String token = authorization.substring("Bearer ".length());
-        final String username = jwtService.extractUsername(token);
+        final String username = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
 
         if (StringUtils.isNotEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.userDetailsService().loadUserByUsername(username);
-            if (jwtService.isValid(token, userDetails)) {
+            if (jwtService.isValid(token, TokenType.ACCESS_TOKEN, userDetails)) {
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
