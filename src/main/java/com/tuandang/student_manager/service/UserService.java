@@ -55,4 +55,14 @@ public class UserService implements IUserService {
     public void deleteUserById(String username) {
         userRepository.deleteById(username);
     }
+
+    @Override
+    public List<String> findAllRolesByUserId(String username) {
+        return userRepository.findAllRolesByUsername(username);
+    }
+
+    @Override
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    }
 }

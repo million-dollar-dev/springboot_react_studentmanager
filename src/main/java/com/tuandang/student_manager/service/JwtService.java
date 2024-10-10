@@ -1,5 +1,6 @@
 package com.tuandang.student_manager.service;
 
+import com.tuandang.student_manager.util.TokenType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -23,47 +24,78 @@ import java.util.function.Function;
 public class JwtService implements IJwtService{
     // Lưu ý phải gói của springboot k phải của lombok
     @Value("${jwt.expiryHour}")
-    Long expiryTime;
+    Long expiryHour;
+    @Value("${jwt.expiryDay}")
+    Long expiryDay;
     @Value("${jwt.secretKey}")
     String secretKey;
+    @Value("${jwt.refreshKey}")
+    String refreshKey;
     @Override
     public String generateToken(UserDetails user) {
-        return generateToken(new HashMap<>(), user);
+        return generateToken(new HashMap<>(), TokenType.ACCESS_TOKEN, user);
     }
 
     @Override
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+    public String generateRefreshToken(UserDetails user) {
+        return generateRefreshToken(new HashMap<>(), TokenType.REFRESH_TOKEN, user);
     }
 
     @Override
-    public boolean isValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername());
+    public String extractUsername(String token, TokenType type) {
+        return extractClaim(token, type, Claims::getSubject);
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
-        final Claims claims = extractAllClaim(token);
+    @Override
+    public boolean isValid(String token, TokenType type, UserDetails userDetails) {
+        final String username = extractUsername(token, type);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token, type));
+    }
+
+    private boolean isTokenExpired(String token, TokenType type) {
+        return extractExpiration(token, type).before(new Date());
+    }
+
+    private Date extractExpiration(String token, TokenType type) {
+        return extractClaim(token, type, Claims::getExpiration);
+    }
+
+    private <T> T extractClaim(String token, TokenType type, Function<Claims, T> claimResolver) {
+        final Claims claims = extractAllClaim(token, type);
         return claimResolver.apply(claims);
     }
 
-    private Claims extractAllClaim(String token) {
-        return Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token).getBody();
+    private Claims extractAllClaim(String token, TokenType type) {
+        return Jwts.parserBuilder().setSigningKey(getKey(type)).build().parseClaimsJws(token).getBody();
     }
 
     // Tạo token
-    private String generateToken(HashMap<String, Object> claims, UserDetails userDetails) {
+    private String generateToken(HashMap<String, Object> claims,TokenType type, UserDetails userDetails) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * expiryTime))
-                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * expiryHour))
+                .signWith(getKey(type), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    private String generateRefreshToken(HashMap<String, Object> claims,TokenType type, UserDetails userDetails) {
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * expiryDay))
+                .signWith(getKey(type), SignatureAlgorithm.HS256)
                 .compact();
     }
     // Get key
-    private Key getKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+    private Key getKey(TokenType type) {
+        byte[] keyBytes;
+        if (TokenType.ACCESS_TOKEN.equals(type))
+            keyBytes = Decoders.BASE64.decode(secretKey);
+        else
+            keyBytes = Decoders.BASE64.decode(refreshKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

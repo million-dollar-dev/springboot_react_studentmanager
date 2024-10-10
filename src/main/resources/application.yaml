@@ -14,5 +14,7 @@ spring:
     show-sql: true
 
 jwt:
+  expiryDay: 14
   expiryHour: 1
-  secretKey: 5019fa334d72b284cd63258a2778910a1c5a1bb1f71ea45961885cdd38a4636c
+  secretKey: RQFcEin7vGHPuP9Rz3TmN4awTnnIzYQmzmvXAGj0LUM=
+  refreshKey: OML9IvYszgroCV2PfkR7VvpZge/UgaQdqR1S25K6nZg=

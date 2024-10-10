@@ -15,7 +15,9 @@ public enum ErrorCode {
     PERMISSION_EXISTED(1003, "Permission already existed", HttpStatus.BAD_REQUEST),
     PERMISSION_NOT_EXISTED(1004, "Permission not existed", HttpStatus.NOT_FOUND),
     ANNOUNCEMENT_EXISTED(1003, "Announcement already existed", HttpStatus.BAD_REQUEST),
-    ANNOUNCEMENT_NOT_EXISTED(1004, "Announcement not existed", HttpStatus.NOT_FOUND)
+    ANNOUNCEMENT_NOT_EXISTED(1004, "Announcement not existed", HttpStatus.NOT_FOUND),
+    TOKEN_NOT_BLANK(1004, "Token must be not blank", HttpStatus.BAD_REQUEST),
+    TOKEN_INVALID(1004, "Token invalid", HttpStatus.BAD_REQUEST),
     ;
     private int code;
     private String message;

@@ -4,9 +4,11 @@ import com.tuandang.student_manager.dto.request.SignInRequest;
 import com.tuandang.student_manager.dto.response.ApiResponse;
 import com.tuandang.student_manager.dto.response.TokenResponse;
 import com.tuandang.student_manager.service.IAuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,13 +30,19 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
-    public String refresh() {
-        return "refresh successfully";
+    public ApiResponse<TokenResponse> refresh(HttpServletRequest request) {
+        return ApiResponse.<TokenResponse>builder()
+                .result(authenticationService.refresh(request))
+                .build();
     }
 
     @PostMapping("/logout")
-    public String logout() {
-        return "logout successfully";
+    public ApiResponse<String> logout(HttpServletRequest request) {
+        return ApiResponse.<String>builder()
+                .result(authenticationService.logout(request))
+                .code(HttpStatus.OK.value())
+                .message("OK")
+                .build();
     }
 
 }
