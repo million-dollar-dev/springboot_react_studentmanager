@@ -1,10 +1,12 @@
 package com.tuandang.student_manager.controller;
 
+import com.tuandang.student_manager.dto.request.ResetPasswordRequest;
 import com.tuandang.student_manager.dto.request.SignInRequest;
 import com.tuandang.student_manager.dto.response.ApiResponse;
 import com.tuandang.student_manager.dto.response.TokenResponse;
 import com.tuandang.student_manager.service.IAuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -44,5 +46,27 @@ public class AuthenticationController {
                 .message("OK")
                 .build();
     }
+
+    @PostMapping("/forgot-password")
+    public ApiResponse<String> forgotPassword(@RequestBody String username) {
+        return ApiResponse.<String>builder()
+                .result(authenticationService.forgotPassword(username))
+                .build();
+    }
+
+    @PostMapping("/reset-password")
+    public ApiResponse<String> resetPassword(@RequestBody String secretKey) {
+        return ApiResponse.<String>builder()
+                .result(authenticationService.resetPassword(secretKey))
+                .build();
+    }
+
+    @PostMapping("/change-password")
+    public ApiResponse<String> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+        return ApiResponse.<String>builder()
+                .result(authenticationService.changePassword(request))
+                .build();
+    }
+
 
 }

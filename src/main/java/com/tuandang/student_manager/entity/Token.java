@@ -24,4 +24,6 @@ public class Token extends AbstractEntity<Integer> implements Serializable {
     String accessToken;
     @Column(name = "refresh_token")
     String refreshToken;
+    @Column(name = "reset_token")
+    private String resetToken;
 }

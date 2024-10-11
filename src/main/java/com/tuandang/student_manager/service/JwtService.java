@@ -1,5 +1,7 @@
 package com.tuandang.student_manager.service;
 
+import com.tuandang.student_manager.exception.AppException;
+import com.tuandang.student_manager.exception.ErrorCode;
 import com.tuandang.student_manager.util.TokenType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 @Service
@@ -31,6 +34,8 @@ public class JwtService implements IJwtService{
     String secretKey;
     @Value("${jwt.refreshKey}")
     String refreshKey;
+    @Value("${jwt.resetKey}")
+    String resetKey;
     @Override
     public String generateToken(UserDetails user) {
         return generateToken(new HashMap<>(), TokenType.ACCESS_TOKEN, user);
@@ -39,6 +44,21 @@ public class JwtService implements IJwtService{
     @Override
     public String generateRefreshToken(UserDetails user) {
         return generateRefreshToken(new HashMap<>(), TokenType.REFRESH_TOKEN, user);
+    }
+
+    @Override
+    public String generateResetToken(UserDetails user) {
+        return generateResetToken(new HashMap<>(), user);
+    }
+
+    private String generateResetToken(Map<String, Object> claims, UserDetails userDetails) {
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .signWith(getKey(TokenType.RESET_TOKEN), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     @Override
@@ -91,11 +111,17 @@ public class JwtService implements IJwtService{
     }
     // Get key
     private Key getKey(TokenType type) {
-        byte[] keyBytes;
-        if (TokenType.ACCESS_TOKEN.equals(type))
-            keyBytes = Decoders.BASE64.decode(secretKey);
-        else
-            keyBytes = Decoders.BASE64.decode(refreshKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+        switch (type) {
+            case ACCESS_TOKEN -> {
+                return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
+            }
+            case REFRESH_TOKEN -> {
+                return Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshKey));
+            }
+            case RESET_TOKEN -> {
+                return Keys.hmacShaKeyFor(Decoders.BASE64.decode(resetKey));
+            }
+            default -> throw new AppException(ErrorCode.TOKEN_INVALID);
+        }
     }
 }

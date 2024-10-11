@@ -16,4 +16,5 @@ public interface IUserService {
     void deleteUserById(String username);
     List<String> findAllRolesByUserId(String username);
     User getByUsername(String userName);
+    String saveUser(User user);
 }

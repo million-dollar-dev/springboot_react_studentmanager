@@ -18,3 +18,4 @@ jwt:
   expiryHour: 1
   secretKey: RQFcEin7vGHPuP9Rz3TmN4awTnnIzYQmzmvXAGj0LUM=
   refreshKey: OML9IvYszgroCV2PfkR7VvpZge/UgaQdqR1S25K6nZg=
+  resetKey: 2OeEeG48CvIcH1K0UAXbSo/7gPj3QLJ7MnQZuscRirQ=

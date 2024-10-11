@@ -18,6 +18,8 @@ public enum ErrorCode {
     ANNOUNCEMENT_NOT_EXISTED(1004, "Announcement not existed", HttpStatus.NOT_FOUND),
     TOKEN_NOT_BLANK(1004, "Token must be not blank", HttpStatus.BAD_REQUEST),
     TOKEN_INVALID(1004, "Token invalid", HttpStatus.BAD_REQUEST),
+    PASSWORD_WRONG(1004, "Password do not match", HttpStatus.BAD_REQUEST),
+    USER_NOT_ACTIVE(1005, "User not active", HttpStatus.BAD_REQUEST)
     ;
     private int code;
     private String message;

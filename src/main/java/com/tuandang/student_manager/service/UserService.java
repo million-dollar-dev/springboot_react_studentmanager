@@ -65,4 +65,12 @@ public class UserService implements IUserService {
     public User getByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
     }
+
+    @Override
+    public String saveUser(User user) {
+        userRepository.save(user);
+        return user.getUsername();
+    }
+
+
 }
