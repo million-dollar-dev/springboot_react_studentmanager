@@ -1,5 +1,6 @@
 package com.tuandang.student_manager.service;
 
+import com.tuandang.student_manager.dto.request.ResetPasswordRequest;
 import com.tuandang.student_manager.dto.request.SignInRequest;
 import com.tuandang.student_manager.dto.response.TokenResponse;
 import com.tuandang.student_manager.entity.Token;
@@ -20,6 +21,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +37,7 @@ public class AuthenticationService implements IAuthenticationService{
     IJwtService jwtService;
     UserService userService;
     TokenService tokenService;
+    PasswordEncoder passwordEncoder;
     @Override
     public TokenResponse authenticate(SignInRequest request) {
         var user = userRepository.findByUsername(request.getUsername())
@@ -104,5 +107,76 @@ public class AuthenticationService implements IAuthenticationService{
         tokenService.delete(userName);
 
         return "Deleted!";
+    }
+
+    @Override
+    public String forgotPassword(String username) {
+        log.info("---------- forgotPassword ----------");
+
+        // check email exists or not
+        User user = userService.getByUsername(username);
+
+        // generate reset token
+        String resetToken = jwtService.generateResetToken(user);
+
+        // save to db
+        tokenService.save(
+                Token.builder()
+                .username(user.getUsername())
+                .resetToken(resetToken)
+                .build());
+
+        // send email to user
+        String confirmLink = String.format("curl --location 'http://localhost:80/auth/reset-password' \\\n" +
+                "--header 'accept: */*' \\\n" +
+                "--header 'Content-Type: application/json' \\\n" +
+                "--data '%s'", resetToken);
+        log.info("--> confirmLink: {}", confirmLink);
+
+        return resetToken;
+    }
+
+    @Override
+    public String resetPassword(String secretKey) {
+        log.info("---------- resetPassword ----------");
+
+        // validate token
+        var user = validateToken(secretKey);
+
+        // check token by username
+        tokenService.getByUsername(user.getUsername());
+
+        return "Reset";
+    }
+
+    @Override
+    public String changePassword(ResetPasswordRequest request) {
+        log.info("---------- changePassword ----------");
+
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_WRONG);
+        }
+
+        // get user by reset token
+        var user = validateToken(request.getSecretKey());
+
+        // update password
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        userService.saveUser(user);
+
+        return "Changed";
+    }
+
+    private User validateToken(String token) {
+        // validate token
+        var userName = jwtService.extractUsername(token, TokenType.RESET_TOKEN);
+
+        // validate user is active or not
+        var user = userService.getByUsername(userName);
+        if (!user.isEnabled()) {
+            throw new AppException(ErrorCode.USER_NOT_ACTIVE);
+        }
+
+        return user;
     }
 }
