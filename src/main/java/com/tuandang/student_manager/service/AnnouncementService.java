@@ -115,7 +115,7 @@ public class AnnouncementService implements IAnnouncementService{
         var announcement = announcementRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ANNOUNCEMENT_NOT_EXISTED));
         announcementMapper.updateAnnouncement(announcement, request);
-        return announcementMapper.toAnnouncementResponse(announcement);
+        return announcementMapper.toAnnouncementResponse(announcementRepository.save(announcement));
     }
 
     @Override
